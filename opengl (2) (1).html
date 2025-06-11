@@ -1,0 +1,750 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>opengl</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><p><strong>2D Σχήμα</strong></p>
+<pre class=" language-c"><code class="prism ++ language-c"><span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/glew.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/freeglut.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;iostream&gt;</span></span>
+
+<span class="token keyword">float</span> posX <span class="token operator">=</span> <span class="token number">0.0f</span><span class="token punctuation">,</span> posY <span class="token operator">=</span> <span class="token number">0.0f</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> angle <span class="token operator">=</span> <span class="token number">0.0f</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> scale <span class="token operator">=</span> <span class="token number">1.0f</span><span class="token punctuation">;</span>
+
+<span class="token keyword">void</span> <span class="token function">drawText</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> text<span class="token punctuation">,</span> <span class="token keyword">float</span> x<span class="token punctuation">,</span> <span class="token keyword">float</span> y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glRasterPos2f</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span> y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">*</span>text<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">glutBitmapCharacter</span><span class="token punctuation">(</span>GLUT_BITMAP_HELVETICA_18<span class="token punctuation">,</span>
+        <span class="token operator">*</span>text<span class="token operator">++</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+
+<span class="token keyword">void</span> <span class="token function">drawHUD</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glMatrixMode</span><span class="token punctuation">(</span>GL_PROJECTION<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glPushMatrix</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glLoadIdentity</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">gluOrtho2D</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glMatrixMode</span><span class="token punctuation">(</span>GL_MODELVIEW<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glPushMatrix</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glLoadIdentity</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+
+    <span class="token function">glEnable</span><span class="token punctuation">(</span>GL_BLEND<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glBlendFunc</span><span class="token punctuation">(</span>GL_SRC_ALPHA<span class="token punctuation">,</span> GL_ONE_MINUS_SRC_ALPHA<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glColor4f</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0.6f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glBegin</span><span class="token punctuation">(</span>GL_QUADS<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.05f</span><span class="token punctuation">,</span> <span class="token number">0.85f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.35f</span><span class="token punctuation">,</span> <span class="token number">0.85f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.35f</span><span class="token punctuation">,</span> <span class="token number">0.65f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.05f</span><span class="token punctuation">,</span> <span class="token number">0.65f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glDisable</span><span class="token punctuation">(</span>GL_BLEND<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+ 
+    <span class="token function">drawText</span><span class="token punctuation">(</span><span class="token string">"Controls:"</span><span class="token punctuation">,</span> <span class="token number">0.07f</span><span class="token punctuation">,</span> <span class="token number">0.82f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">drawText</span><span class="token punctuation">(</span><span class="token string">"WASD - Move"</span><span class="token punctuation">,</span> <span class="token number">0.07f</span><span class="token punctuation">,</span> <span class="token number">0.78f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">drawText</span><span class="token punctuation">(</span><span class="token string">"Arrow Keys - Rotate"</span><span class="token punctuation">,</span> <span class="token number">0.07f</span><span class="token punctuation">,</span> <span class="token number">0.74f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">drawText</span><span class="token punctuation">(</span><span class="token string">"Z/X - Scale"</span><span class="token punctuation">,</span> <span class="token number">0.07f</span><span class="token punctuation">,</span> <span class="token number">0.70f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">drawText</span><span class="token punctuation">(</span><span class="token string">"Mouse - Move"</span><span class="token punctuation">,</span> <span class="token number">0.07f</span><span class="token punctuation">,</span> <span class="token number">0.66f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+ 
+    <span class="token function">glMatrixMode</span><span class="token punctuation">(</span>GL_PROJECTION<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glPopMatrix</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glMatrixMode</span><span class="token punctuation">(</span>GL_MODELVIEW<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glPopMatrix</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">drawSquare</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glBegin</span><span class="token punctuation">(</span>GL_QUADS<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.1f</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">0.1f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.1f</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">0.1f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.1f</span><span class="token punctuation">,</span> <span class="token number">0.1f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.1f</span><span class="token punctuation">,</span> <span class="token number">0.1f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">display</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glClear</span><span class="token punctuation">(</span>GL_COLOR_BUFFER_BIT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glLoadIdentity</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glTranslatef</span><span class="token punctuation">(</span>posX<span class="token punctuation">,</span> posY<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glRotatef</span><span class="token punctuation">(</span>angle<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glScalef</span><span class="token punctuation">(</span>scale<span class="token punctuation">,</span> scale<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">drawSquare</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">drawHUD</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glutSwapBuffers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">keyboard</span><span class="token punctuation">(</span><span class="token keyword">unsigned</span> <span class="token keyword">char</span> key<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span>key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">case</span> <span class="token string">'w'</span><span class="token punctuation">:</span> posY <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">0.05f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'s'</span><span class="token punctuation">:</span> posY <span class="token operator">-</span><span class="token operator">=</span> <span class="token number">0.05f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'a'</span><span class="token punctuation">:</span> posX <span class="token operator">-</span><span class="token operator">=</span> <span class="token number">0.05f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'d'</span><span class="token punctuation">:</span> posX <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">0.05f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'z'</span><span class="token punctuation">:</span> scale <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">0.1f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'x'</span><span class="token punctuation">:</span> scale <span class="token operator">-</span><span class="token operator">=</span> <span class="token number">0.1f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token number">27</span><span class="token punctuation">:</span> <span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">specialKeys</span><span class="token punctuation">(</span><span class="token keyword">int</span> key<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span>key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">case</span> GLUT_KEY_LEFT<span class="token punctuation">:</span> angle <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">5.0f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> GLUT_KEY_RIGHT<span class="token punctuation">:</span> angle <span class="token operator">-</span><span class="token operator">=</span> <span class="token number">5.0f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">mouseMotion</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">,</span> <span class="token keyword">int</span> y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">int</span> width <span class="token operator">=</span> <span class="token function">glutGet</span><span class="token punctuation">(</span>GLUT_WINDOW_WIDTH<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">int</span> height <span class="token operator">=</span> <span class="token function">glutGet</span><span class="token punctuation">(</span>GLUT_WINDOW_HEIGHT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    posX <span class="token operator">=</span> <span class="token punctuation">(</span>x <span class="token operator">-</span> width <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span><span class="token keyword">float</span><span class="token punctuation">)</span><span class="token punctuation">(</span>width <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    posY <span class="token operator">=</span> <span class="token operator">-</span><span class="token punctuation">(</span>y <span class="token operator">-</span> height <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span><span class="token keyword">float</span><span class="token punctuation">)</span><span class="token punctuation">(</span>height <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span><span class="token operator">*</span><span class="token operator">*</span> argv<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glutInit</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argc<span class="token punctuation">,</span> argv<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitDisplayMode</span><span class="token punctuation">(</span>GLUT_DOUBLE <span class="token operator">|</span> GLUT_RGB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitWindowSize</span><span class="token punctuation">(</span><span class="token number">600</span><span class="token punctuation">,</span> <span class="token number">600</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutCreateWindow</span><span class="token punctuation">(</span><span class="token string">"2D Transformations with HUD"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glewInit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token function">glutDisplayFunc</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutKeyboardFunc</span><span class="token punctuation">(</span>keyboard<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutSpecialFunc</span><span class="token punctuation">(</span>specialKeys<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutPassiveMotionFunc</span><span class="token punctuation">(</span>mouseMotion<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glClearColor</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutMainLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><strong>2D με κάτι ακόμα</strong></p>
+<pre class=" language-c"><code class="prism ++ language-c"><span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/glew.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/freeglut.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;cmath&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;iostream&gt;</span></span>
+
+<span class="token keyword">float</span> posX <span class="token operator">=</span> <span class="token number">0.0f</span><span class="token punctuation">,</span> posY <span class="token operator">=</span> <span class="token number">0.0f</span><span class="token punctuation">;</span> <span class="token comment">// Θέση</span>
+<span class="token keyword">float</span> rotation <span class="token operator">=</span> <span class="token number">0.0f</span><span class="token punctuation">;</span> <span class="token comment">// Περιστροφή</span>
+<span class="token keyword">float</span> scale <span class="token operator">=</span> <span class="token number">1.0f</span><span class="token punctuation">;</span> <span class="token comment">// Κλίμακα</span>
+<span class="token keyword">float</span> colorR <span class="token operator">=</span> <span class="token number">1.0f</span><span class="token punctuation">,</span> colorG <span class="token operator">=</span> <span class="token number">1.0f</span><span class="token punctuation">,</span> colorB <span class="token operator">=</span> <span class="token number">1.0f</span><span class="token punctuation">;</span> <span class="token comment">// Χρώμα</span>
+bool autoRotate <span class="token operator">=</span> false<span class="token punctuation">;</span> <span class="token comment">// Αυτόματη περιστροφή</span>
+<span class="token keyword">int</span> shape <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">// 1: Τετράγωνο, 2: Τρίγωνο, 3: Κύκλος</span>
+
+<span class="token keyword">void</span> <span class="token function">drawSquare</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glBegin</span><span class="token punctuation">(</span>GL_QUADS<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">drawTriangle</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glBegin</span><span class="token punctuation">(</span>GL_TRIANGLES<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.0f</span><span class="token punctuation">,</span> <span class="token number">0.6f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">drawCircle</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glBegin</span><span class="token punctuation">(</span>GL_TRIANGLE_FAN<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token number">0.0f</span><span class="token punctuation">,</span> <span class="token number">0.0f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> <span class="token number">360</span><span class="token punctuation">;</span> i <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">float</span> theta <span class="token operator">=</span> i <span class="token operator">*</span> <span class="token number">3.14159f</span> <span class="token operator">/</span> <span class="token number">180.0f</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token function">cos</span><span class="token punctuation">(</span>theta<span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token function">sin</span><span class="token punctuation">(</span>theta<span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">glEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">display</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glClear</span><span class="token punctuation">(</span>GL_COLOR_BUFFER_BIT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glLoadIdentity</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glTranslatef</span><span class="token punctuation">(</span>posX<span class="token punctuation">,</span> posY<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glRotatef</span><span class="token punctuation">(</span>rotation<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glScalef</span><span class="token punctuation">(</span>scale<span class="token punctuation">,</span> scale<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glColor3f</span><span class="token punctuation">(</span>colorR<span class="token punctuation">,</span> colorG<span class="token punctuation">,</span> colorB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span>shape<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">case</span> <span class="token number">1</span><span class="token punctuation">:</span> <span class="token function">drawSquare</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token number">2</span><span class="token punctuation">:</span> <span class="token function">drawTriangle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token number">3</span><span class="token punctuation">:</span> <span class="token function">drawCircle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">glutSwapBuffers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">keyboard</span><span class="token punctuation">(</span><span class="token keyword">unsigned</span> <span class="token keyword">char</span> key<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span>key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">case</span> <span class="token string">'w'</span><span class="token punctuation">:</span> posY <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">0.1f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'s'</span><span class="token punctuation">:</span> posY <span class="token operator">-</span><span class="token operator">=</span> <span class="token number">0.1f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'a'</span><span class="token punctuation">:</span> posX <span class="token operator">-</span><span class="token operator">=</span> <span class="token number">0.1f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'d'</span><span class="token punctuation">:</span> posX <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">0.1f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'z'</span><span class="token punctuation">:</span> scale <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">0.1f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'x'</span><span class="token punctuation">:</span> scale <span class="token operator">-</span><span class="token operator">=</span> <span class="token number">0.1f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'c'</span><span class="token punctuation">:</span> <span class="token comment">// Τυχαίο χρώμα</span>
+            colorR <span class="token operator">=</span> static_cast<span class="token operator">&lt;</span><span class="token keyword">float</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">/</span> RAND_MAX<span class="token punctuation">;</span>
+            colorG <span class="token operator">=</span> static_cast<span class="token operator">&lt;</span><span class="token keyword">float</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">/</span> RAND_MAX<span class="token punctuation">;</span>
+            colorB <span class="token operator">=</span> static_cast<span class="token operator">&lt;</span><span class="token keyword">float</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">/</span> RAND_MAX<span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'1'</span><span class="token punctuation">:</span> shape <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'2'</span><span class="token punctuation">:</span> shape <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">'3'</span><span class="token punctuation">:</span> shape <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token string">' '</span><span class="token punctuation">:</span> autoRotate <span class="token operator">=</span> <span class="token operator">!</span>autoRotate<span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> <span class="token number">27</span><span class="token punctuation">:</span> <span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">specialKeys</span><span class="token punctuation">(</span><span class="token keyword">int</span> key<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span>key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">case</span> GLUT_KEY_LEFT<span class="token punctuation">:</span> rotation <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">5.0f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token keyword">case</span> GLUT_KEY_RIGHT<span class="token punctuation">:</span> rotation <span class="token operator">-</span><span class="token operator">=</span> <span class="token number">5.0f</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">update</span><span class="token punctuation">(</span><span class="token keyword">int</span> value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>autoRotate<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        rotation <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">1.0f</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>rotation <span class="token operator">&gt;</span> <span class="token number">360.0f</span><span class="token punctuation">)</span> rotation <span class="token operator">-</span><span class="token operator">=</span> <span class="token number">360.0f</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutTimerFunc</span><span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">,</span> update<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span><span class="token operator">*</span><span class="token operator">*</span> argv<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glutInit</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argc<span class="token punctuation">,</span> argv<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitDisplayMode</span><span class="token punctuation">(</span>GLUT_DOUBLE <span class="token operator">|</span> GLUT_RGB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitWindowSize</span><span class="token punctuation">(</span><span class="token number">600</span><span class="token punctuation">,</span> <span class="token number">600</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutCreateWindow</span><span class="token punctuation">(</span><span class="token string">"2D Μετασχηματισμοί"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glewInit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glClearColor</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glutDisplayFunc</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutKeyboardFunc</span><span class="token punctuation">(</span>keyboard<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutSpecialFunc</span><span class="token punctuation">(</span>specialKeys<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutTimerFunc</span><span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">,</span> update<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glutMainLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+</code></pre>
+<p><strong>Nokia</strong></p>
+<pre class=" language-c"><code class="prism ++ language-c"><span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/glew.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/freeglut.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;vector&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;cstdlib&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;ctime&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;sstream&gt;</span></span>
+
+<span class="token comment">// Game parameters</span>
+<span class="token keyword">const</span> <span class="token keyword">int</span> GRID_SIZE <span class="token operator">=</span> <span class="token number">20</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span> direction <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>  
+<span class="token comment">// 0: up, 1: down, 2: left, 3: right</span>
+bool gameOver <span class="token operator">=</span> false<span class="token punctuation">;</span>
+<span class="token keyword">int</span> score <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>  <span class="token comment">// Game score</span>
+
+<span class="token comment">// Structure for snake segments</span>
+<span class="token keyword">struct</span> Point <span class="token punctuation">{</span>
+    <span class="token keyword">int</span> x<span class="token punctuation">,</span> y<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+std<span class="token punctuation">:</span><span class="token punctuation">:</span>vector<span class="token operator">&lt;</span>Point<span class="token operator">&gt;</span> snake <span class="token operator">=</span>
+ <span class="token punctuation">{</span> <span class="token punctuation">{</span>GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">,</span> GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">}</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+Point food<span class="token punctuation">;</span>
+
+<span class="token comment">// Generates new food at a random position</span>
+<span class="token keyword">void</span> <span class="token function">generateFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    food<span class="token punctuation">.</span>x <span class="token operator">=</span> <span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> GRID_SIZE<span class="token punctuation">;</span>
+    food<span class="token punctuation">.</span>y <span class="token operator">=</span> <span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> GRID_SIZE<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Draws a square at position (x, y)</span>
+<span class="token keyword">void</span> <span class="token function">drawSquare</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">,</span> <span class="token keyword">int</span> y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">float</span> size <span class="token operator">=</span> <span class="token number">2.0f</span> <span class="token operator">/</span> GRID_SIZE<span class="token punctuation">;</span>
+    <span class="token keyword">float</span> px <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1.0f</span> <span class="token operator">+</span> x <span class="token operator">*</span> size<span class="token punctuation">;</span>
+    <span class="token keyword">float</span> py <span class="token operator">=</span> <span class="token number">1.0f</span> <span class="token operator">-</span> y <span class="token operator">*</span> size <span class="token operator">-</span> size<span class="token punctuation">;</span>
+
+    <span class="token function">glBegin</span><span class="token punctuation">(</span>GL_QUADS<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glVertex2f</span><span class="token punctuation">(</span>px<span class="token punctuation">,</span> py<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glVertex2f</span><span class="token punctuation">(</span>px <span class="token operator">+</span> size<span class="token punctuation">,</span> py<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glVertex2f</span><span class="token punctuation">(</span>px <span class="token operator">+</span> size<span class="token punctuation">,</span> py <span class="token operator">+</span> size<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glVertex2f</span><span class="token punctuation">(</span>px<span class="token punctuation">,</span> py <span class="token operator">+</span> size<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Draws the snake and the food</span>
+<span class="token keyword">void</span> <span class="token function">display</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glClear</span><span class="token punctuation">(</span>GL_COLOR_BUFFER_BIT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>gameOver<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+        <span class="token comment">// Red when the game is over</span>
+        <span class="token function">drawSquare</span><span class="token punctuation">(</span>GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">,</span> GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+		<span class="token comment">// Draw the last part of the snake </span>
+		<span class="token comment">//(for game over display)</span>
+
+        <span class="token comment">// Display "Game Over" message</span>
+        <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        std<span class="token punctuation">:</span><span class="token punctuation">:</span>string gameOverText <span class="token operator">=</span> <span class="token string">"Game Over!"</span><span class="token punctuation">;</span>
+        <span class="token function">glRasterPos2f</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token number">0.0f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">char</span> c <span class="token punctuation">:</span> gameOverText<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">glutBitmapCharacter</span><span class="token punctuation">(</span>GLUT_BITMAP_HELVETICA_18<span class="token punctuation">,</span>c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Red food</span>
+        <span class="token function">drawSquare</span><span class="token punctuation">(</span>food<span class="token punctuation">.</span>x<span class="token punctuation">,</span> food<span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Green snake</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">auto</span><span class="token operator">&amp;</span> segment <span class="token punctuation">:</span> snake<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">drawSquare</span><span class="token punctuation">(</span>segment<span class="token punctuation">.</span>x<span class="token punctuation">,</span> segment<span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// Display score</span>
+        <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        std<span class="token punctuation">:</span><span class="token punctuation">:</span>stringstream ss<span class="token punctuation">;</span>
+        ss <span class="token operator">&lt;&lt;</span> <span class="token string">"Score: "</span> <span class="token operator">&lt;&lt;</span> score<span class="token punctuation">;</span>
+        std<span class="token punctuation">:</span><span class="token punctuation">:</span>string scoreText <span class="token operator">=</span> ss<span class="token punctuation">.</span><span class="token function">str</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glRasterPos2f</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.9f</span><span class="token punctuation">,</span> <span class="token number">0.9f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+        <span class="token comment">// Score at the top left corner</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">char</span> c <span class="token punctuation">:</span> scoreText<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">glutBitmapCharacter</span><span class="token punctuation">(</span>GLUT_BITMAP_HELVETICA_18<span class="token punctuation">,</span>c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">glutSwapBuffers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Updates the position of the snake</span>
+<span class="token comment">// Game logic</span>
+<span class="token keyword">void</span> <span class="token function">update</span><span class="token punctuation">(</span><span class="token keyword">int</span> value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>gameOver<span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+    Point newHead <span class="token operator">=</span> snake<span class="token punctuation">.</span><span class="token function">front</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Snake movement</span>
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span>direction<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token number">0</span><span class="token punctuation">:</span> newHead<span class="token punctuation">.</span>y<span class="token operator">--</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>  <span class="token comment">// Up</span>
+    <span class="token keyword">case</span> <span class="token number">1</span><span class="token punctuation">:</span> newHead<span class="token punctuation">.</span>y<span class="token operator">++</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>  <span class="token comment">// Down</span>
+    <span class="token keyword">case</span> <span class="token number">2</span><span class="token punctuation">:</span> newHead<span class="token punctuation">.</span>x<span class="token operator">--</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>  <span class="token comment">// Left</span>
+    <span class="token keyword">case</span> <span class="token number">3</span><span class="token punctuation">:</span> newHead<span class="token punctuation">.</span>x<span class="token operator">++</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>  <span class="token comment">// Right</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Snake wrapping from one side to the other</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>x <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> newHead<span class="token punctuation">.</span>x <span class="token operator">=</span> GRID_SIZE <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>  
+    <span class="token comment">// If it goes left, wrap to the right</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>x <span class="token operator">&gt;=</span> GRID_SIZE<span class="token punctuation">)</span> newHead<span class="token punctuation">.</span>x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>  
+    <span class="token comment">// If it goes right, wrap to the left</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>y <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> newHead<span class="token punctuation">.</span>y <span class="token operator">=</span> GRID_SIZE <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>  
+    <span class="token comment">// If it goes up, wrap to the bottom</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>y <span class="token operator">&gt;=</span> GRID_SIZE<span class="token punctuation">)</span> newHead<span class="token punctuation">.</span>y <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>  
+    <span class="token comment">// If it goes down, wrap to the top</span>
+
+    <span class="token comment">// Check if the snake hits itself</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">auto</span><span class="token operator">&amp;</span> segment <span class="token punctuation">:</span> snake<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>segment<span class="token punctuation">.</span>x <span class="token operator">==</span> newHead<span class="token punctuation">.</span>x 
+        <span class="token operator">&amp;&amp;</span> segment<span class="token punctuation">.</span>y <span class="token operator">==</span> newHead<span class="token punctuation">.</span>y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            gameOver <span class="token operator">=</span> true<span class="token punctuation">;</span>
+            <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// If the new head is on food</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>x <span class="token operator">==</span> food<span class="token punctuation">.</span>x <span class="token operator">&amp;&amp;</span> newHead<span class="token punctuation">.</span>y <span class="token operator">==</span> food<span class="token punctuation">.</span>y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        snake<span class="token punctuation">.</span><span class="token function">insert</span><span class="token punctuation">(</span>snake<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> newHead<span class="token punctuation">)</span><span class="token punctuation">;</span>  
+        <span class="token comment">// Grow the snake</span>
+        <span class="token function">generateFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        score<span class="token operator">++</span><span class="token punctuation">;</span>  <span class="token comment">// Increase score</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        snake<span class="token punctuation">.</span><span class="token function">insert</span><span class="token punctuation">(</span>snake<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> newHead<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        snake<span class="token punctuation">.</span><span class="token function">pop_back</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Move the snake</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutTimerFunc</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">,</span> update<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+    <span class="token comment">// Update the game every 100ms</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Keyboard handler</span>
+<span class="token keyword">void</span> <span class="token function">keyboard</span><span class="token punctuation">(</span><span class="token keyword">int</span> key<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>gameOver <span class="token operator">&amp;&amp;</span> key <span class="token operator">==</span> <span class="token string">'r'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// Restart the game</span>
+        snake<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        snake<span class="token punctuation">.</span><span class="token function">push_back</span><span class="token punctuation">(</span><span class="token punctuation">{</span> GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">,</span> GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">generateFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        score <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        gameOver <span class="token operator">=</span> false<span class="token punctuation">;</span>
+        direction <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_UP <span class="token operator">&amp;&amp;</span> direction <span class="token operator">!=</span> <span class="token number">1</span><span class="token punctuation">)</span> 
+    direction <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_DOWN <span class="token operator">&amp;&amp;</span> direction <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span> 
+    direction <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_LEFT <span class="token operator">&amp;&amp;</span> direction <span class="token operator">!=</span> <span class="token number">3</span><span class="token punctuation">)</span> 
+    direction <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_RIGHT <span class="token operator">&amp;&amp;</span> direction <span class="token operator">!=</span> <span class="token number">2</span><span class="token punctuation">)</span> 
+    direction <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Main function</span>
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span><span class="token operator">*</span><span class="token operator">*</span> argv<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">srand</span><span class="token punctuation">(</span><span class="token function">time</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">generateFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glutInit</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argc<span class="token punctuation">,</span> argv<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitDisplayMode</span><span class="token punctuation">(</span>GLUT_DOUBLE <span class="token operator">|</span> GLUT_RGB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitWindowSize</span><span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">,</span> <span class="token number">500</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutCreateWindow</span><span class="token punctuation">(</span><span class="token string">"Snake Game"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glClearColor</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutDisplayFunc</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutSpecialFunc</span><span class="token punctuation">(</span>keyboard<span class="token punctuation">)</span><span class="token punctuation">;</span>  
+    <span class="token comment">// Handle special keys (arrow keys)</span>
+    <span class="token function">glutTimerFunc</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">,</span> update<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glutMainLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><strong>Φιδάκι v2.0</strong></p>
+<pre class=" language-c"><code class="prism ++ language-c"><span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/glew.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/freeglut.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;vector&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;cstdlib&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;ctime&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;sstream&gt;</span></span>
+
+<span class="token comment">// Game parameters</span>
+<span class="token keyword">const</span> <span class="token keyword">int</span> GRID_SIZE <span class="token operator">=</span> <span class="token number">20</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token keyword">int</span> FOOD_COUNT <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>  <span class="token comment">// Number of food items</span>
+<span class="token keyword">int</span> direction <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>  <span class="token comment">// 0: up, 1: down, 2: left, 3: right</span>
+bool gameOver <span class="token operator">=</span> false<span class="token punctuation">;</span>
+<span class="token keyword">int</span> score <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Structure for snake segments and food</span>
+<span class="token keyword">struct</span> Point <span class="token punctuation">{</span>
+    <span class="token keyword">int</span> x<span class="token punctuation">,</span> y<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+std<span class="token punctuation">:</span><span class="token punctuation">:</span>vector<span class="token operator">&lt;</span>Point<span class="token operator">&gt;</span> snake <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token punctuation">{</span>GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">,</span> GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">}</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+std<span class="token punctuation">:</span><span class="token punctuation">:</span>vector<span class="token operator">&lt;</span>Point<span class="token operator">&gt;</span> foodList<span class="token punctuation">;</span>  <span class="token comment">// List of food positions</span>
+
+<span class="token comment">// Generate food in random positions</span>
+<span class="token keyword">void</span> <span class="token function">generateFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    foodList<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> FOOD_COUNT<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        Point food<span class="token punctuation">;</span>
+        food<span class="token punctuation">.</span>x <span class="token operator">=</span> <span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> GRID_SIZE<span class="token punctuation">;</span>
+        food<span class="token punctuation">.</span>y <span class="token operator">=</span> <span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> GRID_SIZE<span class="token punctuation">;</span>
+        foodList<span class="token punctuation">.</span><span class="token function">push_back</span><span class="token punctuation">(</span>food<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Draw a rounded square at (x, y)</span>
+<span class="token keyword">void</span> <span class="token function">drawRoundedSquare</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">,</span> <span class="token keyword">int</span> y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">float</span> size <span class="token operator">=</span> <span class="token number">2.0f</span> <span class="token operator">/</span> GRID_SIZE<span class="token punctuation">;</span>
+    <span class="token keyword">float</span> px <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1.0f</span> <span class="token operator">+</span> x <span class="token operator">*</span> size<span class="token punctuation">;</span>
+    <span class="token keyword">float</span> py <span class="token operator">=</span> <span class="token number">1.0f</span> <span class="token operator">-</span> y <span class="token operator">*</span> size <span class="token operator">-</span> size<span class="token punctuation">;</span>
+
+    <span class="token function">glBegin</span><span class="token punctuation">(</span>GL_POLYGON<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">360</span><span class="token punctuation">;</span> i <span class="token operator">+</span><span class="token operator">=</span> <span class="token number">30</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">float</span> theta <span class="token operator">=</span> i <span class="token operator">*</span> <span class="token number">3.14159f</span> <span class="token operator">/</span> <span class="token number">180</span><span class="token punctuation">;</span>
+        <span class="token keyword">float</span> offsetX <span class="token operator">=</span> <span class="token punctuation">(</span>size <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token function">cos</span><span class="token punctuation">(</span>theta<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">float</span> offsetY <span class="token operator">=</span> <span class="token punctuation">(</span>size <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token function">sin</span><span class="token punctuation">(</span>theta<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glVertex2f</span><span class="token punctuation">(</span>px <span class="token operator">+</span> size <span class="token operator">/</span> <span class="token number">2</span> <span class="token operator">+</span> offsetX<span class="token punctuation">,</span> py <span class="token operator">+</span> size <span class="token operator">/</span> <span class="token number">2</span> <span class="token operator">+</span> offsetY<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">glEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Draw the food</span>
+<span class="token keyword">void</span> <span class="token function">drawFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Red food</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">auto</span><span class="token operator">&amp;</span> food <span class="token punctuation">:</span> foodList<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">drawRoundedSquare</span><span class="token punctuation">(</span>food<span class="token punctuation">.</span>x<span class="token punctuation">,</span> food<span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Display function to draw snake, food, and score</span>
+<span class="token keyword">void</span> <span class="token function">display</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glClear</span><span class="token punctuation">(</span>GL_COLOR_BUFFER_BIT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>gameOver<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">drawRoundedSquare</span><span class="token punctuation">(</span>snake<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>x<span class="token punctuation">,</span> snake<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        std<span class="token punctuation">:</span><span class="token punctuation">:</span>string gameOverText <span class="token operator">=</span> <span class="token string">"Game Over! Press 'R' to Restart."</span><span class="token punctuation">;</span>
+        <span class="token function">glRasterPos2f</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token number">0.0f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">char</span> c <span class="token punctuation">:</span> gameOverText<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">glutBitmapCharacter</span><span class="token punctuation">(</span>GLUT_BITMAP_HELVETICA_18<span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token function">drawFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Green snake</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">auto</span><span class="token operator">&amp;</span> segment <span class="token punctuation">:</span> snake<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">drawRoundedSquare</span><span class="token punctuation">(</span>segment<span class="token punctuation">.</span>x<span class="token punctuation">,</span> segment<span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        std<span class="token punctuation">:</span><span class="token punctuation">:</span>stringstream ss<span class="token punctuation">;</span>
+        ss <span class="token operator">&lt;&lt;</span> <span class="token string">"Score: "</span> <span class="token operator">&lt;&lt;</span> score<span class="token punctuation">;</span>
+        std<span class="token punctuation">:</span><span class="token punctuation">:</span>string scoreText <span class="token operator">=</span> ss<span class="token punctuation">.</span><span class="token function">str</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glRasterPos2f</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.9f</span><span class="token punctuation">,</span> <span class="token number">0.9f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">char</span> c <span class="token punctuation">:</span> scoreText<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">glutBitmapCharacter</span><span class="token punctuation">(</span>GLUT_BITMAP_HELVETICA_18<span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">glutSwapBuffers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Update function to move the snake</span>
+<span class="token keyword">void</span> <span class="token function">update</span><span class="token punctuation">(</span><span class="token keyword">int</span> value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>gameOver<span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+    Point newHead <span class="token operator">=</span> snake<span class="token punctuation">.</span><span class="token function">front</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span>direction<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token number">0</span><span class="token punctuation">:</span> newHead<span class="token punctuation">.</span>y<span class="token operator">--</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token number">1</span><span class="token punctuation">:</span> newHead<span class="token punctuation">.</span>y<span class="token operator">++</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token number">2</span><span class="token punctuation">:</span> newHead<span class="token punctuation">.</span>x<span class="token operator">--</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token number">3</span><span class="token punctuation">:</span> newHead<span class="token punctuation">.</span>x<span class="token operator">++</span><span class="token punctuation">;</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Wrap-around if snake moves beyond the grid</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>x <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> newHead<span class="token punctuation">.</span>x <span class="token operator">=</span> GRID_SIZE <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>x <span class="token operator">&gt;=</span> GRID_SIZE<span class="token punctuation">)</span> newHead<span class="token punctuation">.</span>x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>y <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> newHead<span class="token punctuation">.</span>y <span class="token operator">=</span> GRID_SIZE <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>y <span class="token operator">&gt;=</span> GRID_SIZE<span class="token punctuation">)</span> newHead<span class="token punctuation">.</span>y <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Check if snake collides with itself</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">auto</span><span class="token operator">&amp;</span> segment <span class="token punctuation">:</span> snake<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>segment<span class="token punctuation">.</span>x <span class="token operator">==</span> newHead<span class="token punctuation">.</span>x <span class="token operator">&amp;&amp;</span> segment<span class="token punctuation">.</span>y <span class="token operator">==</span> newHead<span class="token punctuation">.</span>y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            gameOver <span class="token operator">=</span> true<span class="token punctuation">;</span>
+            <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Check if snake eats any food</span>
+    bool ateFood <span class="token operator">=</span> false<span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span>size_t i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> foodList<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>newHead<span class="token punctuation">.</span>x <span class="token operator">==</span> foodList<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span>x <span class="token operator">&amp;&amp;</span> newHead<span class="token punctuation">.</span>y <span class="token operator">==</span> foodList<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span>y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            foodList<span class="token punctuation">.</span><span class="token function">erase</span><span class="token punctuation">(</span>foodList<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            ateFood <span class="token operator">=</span> true<span class="token punctuation">;</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>ateFood<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        snake<span class="token punctuation">.</span><span class="token function">insert</span><span class="token punctuation">(</span>snake<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> newHead<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">generateFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        score<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        snake<span class="token punctuation">.</span><span class="token function">insert</span><span class="token punctuation">(</span>snake<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> newHead<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        snake<span class="token punctuation">.</span><span class="token function">pop_back</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutTimerFunc</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">,</span> update<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Keyboard input handling</span>
+<span class="token keyword">void</span> <span class="token function">keyboard</span><span class="token punctuation">(</span><span class="token keyword">unsigned</span> <span class="token keyword">char</span> key<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>gameOver <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> <span class="token string">'r'</span> <span class="token operator">||</span> key <span class="token operator">==</span> <span class="token string">'R'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        snake<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        snake<span class="token punctuation">.</span><span class="token function">push_back</span><span class="token punctuation">(</span><span class="token punctuation">{</span> GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">,</span> GRID_SIZE <span class="token operator">/</span> <span class="token number">2</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">generateFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        score <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        gameOver <span class="token operator">=</span> false<span class="token punctuation">;</span>
+        direction <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+        <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glutTimerFunc</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">,</span> update<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Ξεκινά ξανά το παιχνίδι!</span>
+        <span class="token keyword">return</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Arrow key handling</span>
+<span class="token keyword">void</span> <span class="token function">specialKeyboard</span><span class="token punctuation">(</span><span class="token keyword">int</span> key<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_UP <span class="token operator">&amp;&amp;</span> direction <span class="token operator">!=</span> <span class="token number">1</span><span class="token punctuation">)</span> direction <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_DOWN <span class="token operator">&amp;&amp;</span> direction <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span> direction <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_LEFT <span class="token operator">&amp;&amp;</span> direction <span class="token operator">!=</span> <span class="token number">3</span><span class="token punctuation">)</span> direction <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_RIGHT <span class="token operator">&amp;&amp;</span> direction <span class="token operator">!=</span> <span class="token number">2</span><span class="token punctuation">)</span> direction <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Main function</span>
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span><span class="token operator">*</span><span class="token operator">*</span> argv<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">srand</span><span class="token punctuation">(</span><span class="token function">time</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">generateFood</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glutInit</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argc<span class="token punctuation">,</span> argv<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitDisplayMode</span><span class="token punctuation">(</span>GLUT_DOUBLE <span class="token operator">|</span> GLUT_RGB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitWindowSize</span><span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">,</span> <span class="token number">500</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutCreateWindow</span><span class="token punctuation">(</span><span class="token string">"Snake Game"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glClearColor</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutDisplayFunc</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutKeyboardFunc</span><span class="token punctuation">(</span>keyboard<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutSpecialFunc</span><span class="token punctuation">(</span>specialKeyboard<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutTimerFunc</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">,</span> update<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glutMainLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><strong>Maze Game</strong></p>
+<pre class=" language-c"><code class="prism ++ language-c"><span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/glew.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;GL/freeglut.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;vector&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;cstdlib&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;ctime&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;iostream&gt;</span></span>
+
+<span class="token keyword">const</span> <span class="token keyword">int</span> gridSize <span class="token operator">=</span> <span class="token number">20</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token keyword">int</span> cellSize <span class="token operator">=</span> <span class="token number">20</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token keyword">int</span> screenSize <span class="token operator">=</span> gridSize <span class="token operator">*</span> cellSize<span class="token punctuation">;</span>
+
+<span class="token keyword">struct</span> Point <span class="token punctuation">{</span> <span class="token keyword">int</span> x<span class="token punctuation">,</span> y<span class="token punctuation">;</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+std<span class="token punctuation">:</span><span class="token punctuation">:</span>vector<span class="token operator">&lt;</span>Point<span class="token operator">&gt;</span> walls<span class="token punctuation">;</span>
+Point player <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+Point exitPoint <span class="token operator">=</span> <span class="token punctuation">{</span> gridSize <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> gridSize <span class="token operator">-</span> <span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+bool gameOver <span class="token operator">=</span> false<span class="token punctuation">;</span>
+
+<span class="token keyword">void</span> <span class="token function">drawCell</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">,</span> <span class="token keyword">int</span> y<span class="token punctuation">,</span> <span class="token keyword">float</span> r<span class="token punctuation">,</span> <span class="token keyword">float</span> g<span class="token punctuation">,</span> <span class="token keyword">float</span> b<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glColor3f</span><span class="token punctuation">(</span>r<span class="token punctuation">,</span> g<span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glBegin</span><span class="token punctuation">(</span>GL_QUADS<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glVertex2f</span><span class="token punctuation">(</span>x <span class="token operator">*</span> cellSize<span class="token punctuation">,</span> y <span class="token operator">*</span> cellSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token punctuation">(</span>x <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">*</span> cellSize<span class="token punctuation">,</span> y <span class="token operator">*</span> cellSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glVertex2f</span><span class="token punctuation">(</span><span class="token punctuation">(</span>x <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">*</span> cellSize<span class="token punctuation">,</span> <span class="token punctuation">(</span>y <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">*</span> cellSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glVertex2f</span><span class="token punctuation">(</span>x <span class="token operator">*</span> cellSize<span class="token punctuation">,</span> <span class="token punctuation">(</span>y <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">*</span> cellSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">drawText</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> text<span class="token punctuation">,</span> <span class="token keyword">int</span> x<span class="token punctuation">,</span> <span class="token keyword">int</span> y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glColor3f</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glRasterPos2i</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span> y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">*</span>text<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">glutBitmapCharacter</span><span class="token punctuation">(</span>GLUT_BITMAP_HELVETICA_18<span class="token punctuation">,</span> <span class="token operator">*</span>text<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        text<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">display</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glClear</span><span class="token punctuation">(</span>GL_COLOR_BUFFER_BIT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span><span class="token operator">&amp;</span> wall <span class="token punctuation">:</span> walls<span class="token punctuation">)</span>
+        <span class="token function">drawCell</span><span class="token punctuation">(</span>wall<span class="token punctuation">.</span>x<span class="token punctuation">,</span> wall<span class="token punctuation">.</span>y<span class="token punctuation">,</span> <span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">drawCell</span><span class="token punctuation">(</span>exitPoint<span class="token punctuation">.</span>x<span class="token punctuation">,</span> exitPoint<span class="token punctuation">.</span>y<span class="token punctuation">,</span> <span class="token number">0.0f</span><span class="token punctuation">,</span> <span class="token number">1.0f</span><span class="token punctuation">,</span> <span class="token number">0.0f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">drawCell</span><span class="token punctuation">(</span>player<span class="token punctuation">.</span>x<span class="token punctuation">,</span> player<span class="token punctuation">.</span>y<span class="token punctuation">,</span> <span class="token number">0.0f</span><span class="token punctuation">,</span> <span class="token number">0.0f</span><span class="token punctuation">,</span> <span class="token number">1.0f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>gameOver<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">drawText</span><span class="token punctuation">(</span><span class="token string">"YOU WIN!"</span><span class="token punctuation">,</span> screenSize <span class="token operator">/</span> <span class="token number">2</span> <span class="token operator">-</span> <span class="token number">40</span><span class="token punctuation">,</span> screenSize <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">glutSwapBuffers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+bool <span class="token function">isWall</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">,</span> <span class="token keyword">int</span> y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span><span class="token operator">&amp;</span> wall <span class="token punctuation">:</span> walls<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>wall<span class="token punctuation">.</span>x <span class="token operator">==</span> x <span class="token operator">&amp;&amp;</span> wall<span class="token punctuation">.</span>y <span class="token operator">==</span> y<span class="token punctuation">)</span>
+            <span class="token keyword">return</span> true<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> false<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">addWalls</span><span class="token punctuation">(</span><span class="token keyword">int</span> value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>gameOver<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">int</span> newX <span class="token operator">=</span> <span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> gridSize<span class="token punctuation">;</span>
+        <span class="token keyword">int</span> newY <span class="token operator">=</span> <span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> gridSize<span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">isWall</span><span class="token punctuation">(</span>newX<span class="token punctuation">,</span> newY<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token punctuation">(</span>newX <span class="token operator">==</span> player<span class="token punctuation">.</span>x <span class="token operator">&amp;&amp;</span> newY <span class="token operator">==</span> player<span class="token punctuation">.</span>y<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token punctuation">(</span>newX <span class="token operator">==</span> exitPoint<span class="token punctuation">.</span>x <span class="token operator">&amp;&amp;</span> newY <span class="token operator">==</span> exitPoint<span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            walls<span class="token punctuation">.</span><span class="token function">push_back</span><span class="token punctuation">(</span><span class="token punctuation">{</span> newX<span class="token punctuation">,</span> newY <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">glutTimerFunc</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">,</span> addWalls<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">keyboard</span><span class="token punctuation">(</span><span class="token keyword">int</span> key<span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>gameOver<span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">int</span> newX <span class="token operator">=</span> player<span class="token punctuation">.</span>x<span class="token punctuation">,</span> newY <span class="token operator">=</span> player<span class="token punctuation">.</span>y<span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_UP<span class="token punctuation">)</span>    newY<span class="token operator">--</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_DOWN<span class="token punctuation">)</span>  newY<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_LEFT<span class="token punctuation">)</span>  newX<span class="token operator">--</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>key <span class="token operator">==</span> GLUT_KEY_RIGHT<span class="token punctuation">)</span> newX<span class="token operator">++</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newX <span class="token operator">&gt;=</span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> newX <span class="token operator">&lt;</span> gridSize <span class="token operator">&amp;&amp;</span> newY <span class="token operator">&gt;=</span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> newY <span class="token operator">&lt;</span> gridSize <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token function">isWall</span><span class="token punctuation">(</span>newX<span class="token punctuation">,</span> newY<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        player<span class="token punctuation">.</span>x <span class="token operator">=</span> newX<span class="token punctuation">;</span>
+        player<span class="token punctuation">.</span>y <span class="token operator">=</span> newY<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>player<span class="token punctuation">.</span>x <span class="token operator">==</span> exitPoint<span class="token punctuation">.</span>x <span class="token operator">&amp;&amp;</span> player<span class="token punctuation">.</span>y <span class="token operator">==</span> exitPoint<span class="token punctuation">.</span>y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        gameOver <span class="token operator">=</span> true<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">glutPostRedisplay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">init</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glMatrixMode</span><span class="token punctuation">(</span>GL_PROJECTION<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glLoadIdentity</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">gluOrtho2D</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> screenSize<span class="token punctuation">,</span> screenSize<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glMatrixMode</span><span class="token punctuation">(</span>GL_MODELVIEW<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glLoadIdentity</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">srand</span><span class="token punctuation">(</span><span class="token function">time</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutTimerFunc</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">,</span> addWalls<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span><span class="token operator">*</span><span class="token operator">*</span> argv<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">glutInit</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argc<span class="token punctuation">,</span> argv<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitDisplayMode</span><span class="token punctuation">(</span>GLUT_DOUBLE <span class="token operator">|</span> GLUT_RGB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutInitWindowSize</span><span class="token punctuation">(</span>screenSize<span class="token punctuation">,</span> screenSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutCreateWindow</span><span class="token punctuation">(</span><span class="token string">"Growing Maze Escape"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glewInit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">init</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glutDisplayFunc</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glutSpecialFunc</span><span class="token punctuation">(</span>keyboard<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glutMainLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</div>
+</body>
+
+</html>
