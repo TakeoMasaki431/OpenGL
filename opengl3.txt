@@ -1,0 +1,267 @@
+//1o
+
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+#include <cmath>
+
+// Define the number of points to compute along the hyperbola for smoothness
+const int NUM_POINTS = 1000;
+
+// The range for the parameter t.
+// Note: cosh and sinh grow quickly, so we use a moderate range.
+const double T_MIN = 0.0;
+const double T_MAX = 4.0;
+
+// Display callback function
+void display() {
+    // Clear the color and depth buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    // Reset the current matrix
+    glLoadIdentity();
+    
+    // Switch to projection matrix mode and set up an orthographic projection for 2D drawing
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // Set orthographic projection: left, right, bottom, top, near, far
+    glOrtho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
+    
+    // Switch back to model-view matrix mode
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
+    // Draw coordinate axes (white lines)
+    glColor3f(1.0f, 1.0f, 1.0f); // White color
+    glBegin(GL_LINES);
+        // X-axis
+        glVertex2f(-10.0f, 0.0f);
+        glVertex2f(10.0f, 0.0f);
+        // Y-axis
+        glVertex2f(0.0f, -10.0f);
+        glVertex2f(0.0f, 10.0f);
+    glEnd();
+    
+    // Set the color for the hyperbola (red)
+    glColor3f(1.0f, 0.0f, 0.0f);
+    
+    // Draw the right branch of the hyperbola (upper part)
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < NUM_POINTS; i++) {
+        // Compute the parameter t linearly from T_MIN to T_MAX
+        double t = T_MIN + (T_MAX - T_MIN) * i / (NUM_POINTS - 1);
+        // Compute x and y using the parametric equations for the right branch
+        double x = cosh(t); // cosh(t) >= 1 for all t
+        double y = sinh(t);
+        glVertex2d(x, y);
+    }
+    glEnd();
+    
+    // Draw the right branch of the hyperbola (lower part)
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < NUM_POINTS; i++) {
+        double t = T_MIN + (T_MAX - T_MIN) * i / (NUM_POINTS - 1);
+        double x = cosh(t);
+        double y = -sinh(t); // Mirror the upper branch across the x-axis
+        glVertex2d(x, y);
+    }
+    glEnd();
+    
+    // Draw the left branch of the hyperbola (upper part)
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < NUM_POINTS; i++) {
+        double t = T_MIN + (T_MAX - T_MIN) * i / (NUM_POINTS - 1);
+        double x = -cosh(t); // Negative x for the left branch
+        double y = sinh(t);
+        glVertex2d(x, y);
+    }
+    glEnd();
+    
+    // Draw the left branch of the hyperbola (lower part)
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < NUM_POINTS; i++) {
+        double t = T_MIN + (T_MAX - T_MIN) * i / (NUM_POINTS - 1);
+        double x = -cosh(t);
+        double y = -sinh(t); // Mirror across the x-axis
+        glVertex2d(x, y);
+    }
+    glEnd();
+    
+    // Swap buffers to display the rendered image
+    glutSwapBuffers();
+}
+
+// Main function: sets up the GLUT window and enters the main loop
+int main(int argc, char** argv) {
+    // Initialize GLUT
+    glutInit(&argc, argv);
+    
+    // Set display mode: double buffering, RGB color, and depth buffering
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    
+    // Set initial window size
+    glutInitWindowSize(800, 600);
+    
+    // Create the window with a title
+    glutCreateWindow("Hyperbola using OpenGL, GLEW and FreeGLUT");
+    
+    // Initialize GLEW to set up the OpenGL Function pointers
+    glewInit();
+    
+    // Set the clear color (black background)
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    
+    // Register the display callback function
+    glutDisplayFunc(display);
+    
+    // Enter the GLUT main loop (this will not return)
+    glutMainLoop();
+    
+    return 0;
+}
+
+
+//2o
+
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+#include <cmath>
+
+// ---------------------------------------------------------------------
+// Constants for drawing the hyperbola
+// ---------------------------------------------------------------------
+const int NUM_POINTS_HYPERBOLA = 1000; // Number of points for smooth hyperbola curves
+const double T_MIN = 0.0;
+const double T_MAX = 4.0; // Moderate range because cosh and sinh grow fast
+
+// ---------------------------------------------------------------------
+// Constants for drawing the parabola
+// We'll use y = x^2, for x in [-3, 3]
+// ---------------------------------------------------------------------
+const int NUM_POINTS_PARABOLA = 500;
+const double X_MIN = -3.0;
+const double X_MAX = 3.0;
+
+// ---------------------------------------------------------------------
+// Display callback function
+// ---------------------------------------------------------------------
+void display() {
+    // Clear the color and depth buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    // Reset the current model-view matrix
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
+    // Switch to projection matrix mode and set up an orthographic projection for 2D drawing
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // Set orthographic projection: left, right, bottom, top, near, far
+    glOrtho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
+    
+    // Switch back to model-view matrix mode
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
+    // Draw coordinate axes (white lines)
+    glColor3f(1.0f, 1.0f, 1.0f); // White color
+    glBegin(GL_LINES);
+        // X-axis
+        glVertex2f(-10.0f, 0.0f);
+        glVertex2f(10.0f, 0.0f);
+        // Y-axis
+        glVertex2f(0.0f, -10.0f);
+        glVertex2f(0.0f, 10.0f);
+    glEnd();
+    
+    // ---------------------------------------------------------------------
+    // Draw the Hyperbola: x^2 - y^2 = 1 using parametric equations.
+    // Right branch: x = cosh(t), y = sinh(t)
+    // Left branch:  x = -cosh(t), y = sinh(t)
+    // We draw both the upper and lower parts by mirroring y.
+    // ---------------------------------------------------------------------
+    glColor3f(1.0f, 0.0f, 0.0f); // Set color to red for the hyperbola
+
+    // Right branch (upper part)
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < NUM_POINTS_HYPERBOLA; i++) {
+        double t = T_MIN + (T_MAX - T_MIN) * i / (NUM_POINTS_HYPERBOLA - 1);
+        double x = cosh(t); // cosh(t) >= 1 for all t
+        double y = sinh(t);
+        glVertex2d(x, y);
+    }
+    glEnd();
+
+    // Right branch (lower part) - mirror y across the x-axis
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < NUM_POINTS_HYPERBOLA; i++) {
+        double t = T_MIN + (T_MAX - T_MIN) * i / (NUM_POINTS_HYPERBOLA - 1);
+        double x = cosh(t);
+        double y = -sinh(t);
+        glVertex2d(x, y);
+    }
+    glEnd();
+
+    // Left branch (upper part)
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < NUM_POINTS_HYPERBOLA; i++) {
+        double t = T_MIN + (T_MAX - T_MIN) * i / (NUM_POINTS_HYPERBOLA - 1);
+        double x = -cosh(t); // Negative x for the left branch
+        double y = sinh(t);
+        glVertex2d(x, y);
+    }
+    glEnd();
+
+    // Left branch (lower part)
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < NUM_POINTS_HYPERBOLA; i++) {
+        double t = T_MIN + (T_MAX - T_MIN) * i / (NUM_POINTS_HYPERBOLA - 1);
+        double x = -cosh(t);
+        double y = -sinh(t);
+        glVertex2d(x, y);
+    }
+    glEnd();
+
+    // ---------------------------------------------------------------------
+    // Draw the Parabola: using the equation y = x^2
+    // We'll draw the curve for x in the range [X_MIN, X_MAX]
+    // ---------------------------------------------------------------------
+    glColor3f(0.0f, 0.0f, 1.0f); // Set color to blue for the parabola
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < NUM_POINTS_PARABOLA; i++) {
+        double x = X_MIN + (X_MAX - X_MIN) * i / (NUM_POINTS_PARABOLA - 1);
+        double y = x * x; // Parabolic function: y = x^2
+        glVertex2d(x, y);
+    }
+    glEnd();
+
+    // Swap buffers to display the rendered image
+    glutSwapBuffers();
+}
+
+// ---------------------------------------------------------------------
+// Main function: sets up the GLUT window and enters the main loop
+// ---------------------------------------------------------------------
+int main(int argc, char** argv) {
+    // Initialize GLUT
+    glutInit(&argc, argv);
+    // Set display mode: double buffering, RGB color, and depth buffering
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    // Set initial window size
+    glutInitWindowSize(800, 600);
+    // Create the window with a title
+    glutCreateWindow("Hyperbola and Parabola using OpenGL, GLEW and FreeGLUT");
+
+    // Initialize GLEW to setup the OpenGL function pointers
+    glewInit();
+
+    // Set the clear color (black background)
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    // Register the display callback function
+    glutDisplayFunc(display);
+    
+    // Enter the GLUT main loop (this will not return)
+    glutMainLoop();
+
+    return 0;
+}
